@@ -1,3 +1,15 @@
-<h1>Welcome to your library project</h1>
-<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+
+<script lang="ts">
+    import Carousel from "$lib/index.svelte";
+</script>
+
+<style>
+    .carousel-container {
+        height: 600px;
+        width: 600px;
+    }
+</style>
+
+<div class="carousel-container">
+    <Carousel />
+</div>
