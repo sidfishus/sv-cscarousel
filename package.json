@@ -3,7 +3,7 @@
 	"repository": "sidfishus/sv-cscarousel",
 	"author": "sidfishus",
 	"description": "A responsive re-usable Svelte carousel component.",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run prepack",
