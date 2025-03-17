@@ -1,53 +1,41 @@
 <script lang="ts">
     import type {CarouselFileDetails} from "./index.js";
     import GalleryFileComponent from "./GalleryFileComponent.svelte";
-    import type {FileNonState} from "$lib/InternalTypes.js";
     import {onMount} from "svelte";
+    import {ConditionalLoadFiles, FileLoadingState, GetCurrentFileIndex} from "./Internal.js";
 
-    let { files } : {
+    let { files=$bindable(), autoLoadLeftAndRightFiles, filePath } : {
         files: CarouselFileDetails[];
+        autoLoadLeftAndRightFiles?: boolean;
+        filePath?: string;
     } = $props();
 
+    let carousel:HTMLDivElement|null=null;
 
-    // const fileNonState: FileNonState = {
-    //     selectedId: (selectedId === null || selectedId === undefined ? files[0].id : selectedId),
-    //     loadingIdList: new Set<bigint>()
-    // }
+    //sidtodo - this doesn't need to map
+    let fileLoadingState=$state<FileLoadingState[]>(files.map(file => FileLoadingState.initial));
 
-    let mounted=$state<boolean>(false);
+    //sidtodo do we need the ID?
 
-    let scrollLeft=$state<number>(0);
-
-    let carousel=null;
-
+    //sidtodo what if a file is deleted?
     onMount(() => {
-        mounted=true; //sidtodo do we need this? or can we just use the presence of carousel?
+        ConditionalLoadFiles(0, autoLoadLeftAndRightFiles===true, files, fileLoadingState);
     });
 
-    const GetCarouselWidth = () => carousel?.offsetWidth ?? 0;
-
-    const GetCurrentFileIndex = () => {
-
-        const scrollX=scrollLeft;
-        const fileWidth=GetCarouselWidth();
-
-        if(fileWidth === 0)
-            return 0;
-
-        let currentIdx=Math.round(scrollX/fileWidth);
-
-        const diff=scrollX - (currentIdx * fileWidth);
-        if(diff > (fileWidth / 2)) {
-            currentIdx = currentIdx + 1;
-        }
-
-        return currentIdx;
-    }
-
-    const selectedIndex=$derived.by(GetCurrentFileIndex);
+    let currentIndex=$state<number>(0);
 
     const onScroll = () => {
-        scrollLeft = carousel.scrollLeft;
+        if(!carousel)
+            return;
+
+        const previousIndex=currentIndex;
+        const newIndex=GetCurrentFileIndex(carousel.scrollLeft, carousel.offsetWidth);
+        if(previousIndex === newIndex)
+            return;
+
+        currentIndex=newIndex;
+
+        ConditionalLoadFiles(currentIndex, autoLoadLeftAndRightFiles===true, files, fileLoadingState, filePath);
     }
 </script>
 
@@ -73,10 +61,9 @@
 <div class="carousel-wrapper">
     <div class="carousel" onscroll={onScroll} bind:this={carousel}>
         {#each files as iterFile, i}
-            <GalleryFileComponent idx={i} mounted={mounted} />
+            <GalleryFileComponent fileSrc={iterFile.src} loaded={fileLoadingState[i] === FileLoadingState.loaded} />
         {/each}
     </div>
-
-    <div>{scrollLeft}</div>
-    <div>{selectedIndex}</div>
 </div>
+
+<button onclick={()=>files=files.splice(currentIndex)}>DElete</button>

@@ -2,7 +2,6 @@
 <script lang="ts">
     import Carousel from "$lib/index.svelte";
     import type {CarouselFileDetails} from "$lib/index.js";
-    import Test from "$lib/Test.svelte";
 
     const files: CarouselFileDetails[] = [
         {
@@ -30,6 +29,14 @@
             id: 6n,
         }
     ];
+
+    // Yes this is slow.
+    let filesMultipliedTest=[...files];
+    for(let i=0;i<18;++i) {
+        filesMultipliedTest = [...filesMultipliedTest,...files];
+    }
+
+    let filesMultiplied=$state<CarouselFileDetails[]>(filesMultipliedTest);
 </script>
 
 <style>
@@ -40,7 +47,9 @@
 </style>
 
 <div class="carousel-container">
-    <Carousel files={files} />
+    <Carousel bind:files={filesMultiplied} autoLoadLeftAndRightFiles={true} />
 </div>
 
-    <!--<Test />-->
+<br />
+<br />
+<div>number of files: {filesMultiplied.length}</div>

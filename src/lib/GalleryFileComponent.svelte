@@ -1,44 +1,8 @@
 
 <script lang="ts">
-    import type {CarouselFileDetails} from "./index.js";
-    import { onMount} from "svelte";
+    let { loaded, fileSrc } : {loaded: boolean, fileSrc: string} = $props();
 
-    let { idx, mounted } : {idx: number, mounted: boolean} = $props();
-
-    enum LoadingState {
-        initial = 0,
-        loading = 1,
-        loaded = 2
-    }
-
-    // I think the state needs to be owned by the parent
-
-    let loadingState=$state<LoadingState>(LoadingState.initial);
-
-    // $effect(() => {
-    //     if(mounted && idx === 0 && loadingState===LoadingState.initial) {
-    //         loadingState=LoadingState.loading;
-    //         //sidtodo if shown.
-    //         const domFile = new Image();
-    //         domFile.src = "IMG_002.jpg"; //FileFullUrl(mainProps, file.src);
-    //
-    //         //loadingNonState.loadingIdList.add(file.id);
-    //
-    //         domFile.onload = () => {
-    //
-    //             //loadingNonState.loadingIdList.delete(file.id);
-    //             // SetState(curState => MutateStateSetFileLoadedState(curState, {
-    //             //     isLoading: false,
-    //             //     src: domFile.src,
-    //             //     error: false,
-    //             // }, file.id, true));
-    //
-    //             loadingState=LoadingState.loaded;
-    //         }
-    //     }
-    // });
-
-    let fileStyle=$derived(loadingState === LoadingState.loaded ? 'background-image: url(IMG_002.jpg);' : '');
+    let fileStyle=$derived(loaded ? 'background-image: url(' + fileSrc +');' : '');
 </script>
 
 
@@ -71,5 +35,5 @@
 </style>
 
 <div class="file-container">
-    <div class="file{(loadingState === LoadingState.loaded ? '' : ' loading')}" style={fileStyle}></div>
+    <div class="file{(loaded ? '' : ' loading')}" style={fileStyle}></div>
 </div>

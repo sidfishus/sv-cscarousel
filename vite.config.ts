@@ -1,7 +1,7 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
-//sidtodo how do I change this per build (prod vs dev)
+//sidtodo this isn't working.
 export default defineConfig({
 	plugins: [sveltekit()],
 	build: {
