@@ -1,4 +1,4 @@
-import type {CarouselFileDetails} from "./index.js";
+import type {CarouselFileDetails, CarouselProps} from "./index.js";
 
 export enum FileLoadingState {
     initial,
@@ -33,12 +33,15 @@ const GetFilePath = (file: CarouselFileDetails, filePath?: string) => {
     return filePath ? filePath + file.src : file.src;
 }
 
-const ConditionalLoadFile = (idx: number, fileLoadingState: FileLoadingState[], files: CarouselFileDetails[],
-                             filePath?: string) => {
+const ConditionalLoadFile = <DerivedFileDetails extends CarouselFileDetails>(
+    idx: number, props: CarouselProps<DerivedFileDetails>, fileLoadingState: FileLoadingState[]) => {
+
     if(fileLoadingState[idx] !== FileLoadingState.initial)
         return;
 
     fileLoadingState[idx]=FileLoadingState.loading;
+
+    const { files, filePath } = props;
 
     const domFile = new Image();
     domFile.src = GetFilePath(files[idx], filePath);
@@ -48,13 +51,15 @@ const ConditionalLoadFile = (idx: number, fileLoadingState: FileLoadingState[], 
     }
 }
 
-export const ConditionalLoadFiles =
-    (idx: number, autoLoadLeftAndRightFiles: boolean, files: CarouselFileDetails[],
-     fileLoadingState: FileLoadingState[], filePath?: string) => {
-    ConditionalLoadFile(idx, fileLoadingState, files, filePath);
+export const ConditionalLoadFiles = <DerivedFileDetails extends CarouselFileDetails>(
+    idx: number, props: CarouselProps<DerivedFileDetails>, fileLoadingState: FileLoadingState[]) => {
+
+    const { files, autoLoadLeftAndRightFiles } = props;
+
+    ConditionalLoadFile(idx, props, fileLoadingState);
     if(autoLoadLeftAndRightFiles) {
-        ConditionalLoadFile(GetCarouselFileLeftIdx(idx,files), fileLoadingState, files, filePath);
-        ConditionalLoadFile(GetCarouselFileRightIdx(idx,files), fileLoadingState, files, filePath);
+        ConditionalLoadFile(GetCarouselFileLeftIdx(idx,files), props, fileLoadingState);
+        ConditionalLoadFile(GetCarouselFileRightIdx(idx,files), props, fileLoadingState);
     }
 };
 

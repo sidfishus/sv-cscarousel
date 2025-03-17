@@ -1,5 +1,5 @@
 <script lang="ts" generics="DerivedFileDetails extends CarouselFileDetails">
-    import type {CarouselFileDetails} from "./index.js";
+    import type {CarouselFileDetails, CarouselProps} from "./index.js";
     import GalleryFileComponent from "./GalleryFileComponent.svelte";
     import {onMount} from "svelte";
     import {
@@ -9,18 +9,16 @@
         InitialiseFileLoadingState
     } from "./Internal.js";
 
-    let { files, autoLoadLeftAndRightFiles, filePath } : {
-        files: DerivedFileDetails[];
-        autoLoadLeftAndRightFiles?: boolean;
-        filePath?: string;
-    } = $props();
+    const allProps: CarouselProps<DerivedFileDetails> = $props();
+
+    const { files }: CarouselProps<DerivedFileDetails> = allProps;
 
     let carousel:HTMLDivElement|null=null;
 
     let fileLoadingState=$state<FileLoadingState[]>(InitialiseFileLoadingState(files));
 
     onMount(() => {
-        ConditionalLoadFiles(0, autoLoadLeftAndRightFiles===true, files, fileLoadingState);
+        ConditionalLoadFiles(0, allProps, fileLoadingState);
     });
 
     let currentIndex=$state<number>(0);
@@ -36,7 +34,7 @@
 
         currentIndex=newIndex;
 
-        ConditionalLoadFiles(currentIndex, autoLoadLeftAndRightFiles===true, files, fileLoadingState, filePath);
+        ConditionalLoadFiles(currentIndex, allProps, fileLoadingState);
     }
 </script>
 
