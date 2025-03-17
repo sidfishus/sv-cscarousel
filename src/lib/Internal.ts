@@ -57,3 +57,12 @@ export const ConditionalLoadFiles =
         ConditionalLoadFile(GetCarouselFileRightIdx(idx,files), fileLoadingState, files, filePath);
     }
 };
+
+export const InitialiseFileLoadingState = (files: CarouselFileDetails[]) => {
+
+    const arr=new Array<FileLoadingState>(files.length);
+    for(let i=0;i<arr.length;i++)
+        arr[i]=FileLoadingState.initial;
+
+    return arr;
+}

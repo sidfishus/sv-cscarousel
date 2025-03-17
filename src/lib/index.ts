@@ -1,5 +1,4 @@
 export type CarouselFileDetails = {
     src: string;
-    id: bigint;
-    additionalClass?: string;
+    additionalClass?: string //sidtodo: needed?
 }

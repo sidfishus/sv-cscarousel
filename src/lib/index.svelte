@@ -1,23 +1,24 @@
-<script lang="ts">
+<script lang="ts" generics="DerivedFileDetails extends CarouselFileDetails">
     import type {CarouselFileDetails} from "./index.js";
     import GalleryFileComponent from "./GalleryFileComponent.svelte";
     import {onMount} from "svelte";
-    import {ConditionalLoadFiles, FileLoadingState, GetCurrentFileIndex} from "./Internal.js";
+    import {
+        ConditionalLoadFiles,
+        FileLoadingState,
+        GetCurrentFileIndex,
+        InitialiseFileLoadingState
+    } from "./Internal.js";
 
-    let { files=$bindable(), autoLoadLeftAndRightFiles, filePath } : {
-        files: CarouselFileDetails[];
+    let { files, autoLoadLeftAndRightFiles, filePath } : {
+        files: DerivedFileDetails[];
         autoLoadLeftAndRightFiles?: boolean;
         filePath?: string;
     } = $props();
 
     let carousel:HTMLDivElement|null=null;
 
-    //sidtodo - this doesn't need to map
-    let fileLoadingState=$state<FileLoadingState[]>(files.map(file => FileLoadingState.initial));
+    let fileLoadingState=$state<FileLoadingState[]>(InitialiseFileLoadingState(files));
 
-    //sidtodo do we need the ID?
-
-    //sidtodo what if a file is deleted?
     onMount(() => {
         ConditionalLoadFiles(0, autoLoadLeftAndRightFiles===true, files, fileLoadingState);
     });
@@ -65,5 +66,3 @@
         {/each}
     </div>
 </div>
-
-<button onclick={()=>files=files.splice(currentIndex)}>DElete</button>

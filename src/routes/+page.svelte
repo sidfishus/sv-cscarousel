@@ -3,7 +3,11 @@
     import Carousel from "$lib/index.svelte";
     import type {CarouselFileDetails} from "$lib/index.js";
 
-    const files: CarouselFileDetails[] = [
+    type ExtendedCarouselFileDetails = CarouselFileDetails & {
+        id: bigint;
+    }
+
+    const files: ExtendedCarouselFileDetails[] = [
         {
             src: "IMG_1397.jpg",
             id: 1n,
@@ -36,7 +40,7 @@
         filesMultipliedTest = [...filesMultipliedTest,...files];
     }
 
-    let filesMultiplied=$state<CarouselFileDetails[]>(filesMultipliedTest);
+    let filesMultiplied=$state<ExtendedCarouselFileDetails[]>(filesMultipliedTest);
 </script>
 
 <style>
@@ -47,9 +51,5 @@
 </style>
 
 <div class="carousel-container">
-    <Carousel bind:files={filesMultiplied} autoLoadLeftAndRightFiles={true} />
+    <Carousel files={filesMultiplied} autoLoadLeftAndRightFiles={true} />
 </div>
-
-<br />
-<br />
-<div>number of files: {filesMultiplied.length}</div>
