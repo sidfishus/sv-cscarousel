@@ -1,10 +1,24 @@
 
-<script lang="ts">
-    let { loaded, fileSrc } : {loaded: boolean, fileSrc: string} = $props();
+<script lang="ts" generics="DerivedFileDetails extends CarouselFileDetails">
+    import type {CarouselFileDetails} from "./index.js";
+    import type { GalleryFileProps } from "./Internal.js";
 
-    let fileStyle=$derived(loaded ? 'background-image: url(' + fileSrc +');' : '');
+    const allProps: GalleryFileProps<DerivedFileDetails> = $props();
+
+    const { mainProps, loaded, fileSrc, additionalClass } = allProps;
+
+    const fileContainerClass = mainProps.additionalFileContainerClass
+        ? "file-container " + mainProps.additionalFileContainerClass
+        : "file-container";
+
+    const baseFileClass = loaded
+        ? "file"
+        : "file loading";
+
+    const fileClass = additionalClass ? baseFileClass + " " + additionalClass : baseFileClass;
+
+    const fileStyle=$derived(loaded ? 'background-image: url(' + fileSrc +');' : '');
 </script>
-
 
 <style>
     .file-container {
@@ -34,6 +48,6 @@
     }
 </style>
 
-<div class="file-container">
-    <div class="file{(loaded ? '' : ' loading')}" style={fileStyle}></div>
+<div class={fileContainerClass}>
+    <div class={fileClass} style={fileStyle}></div>
 </div>

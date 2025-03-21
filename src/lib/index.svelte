@@ -4,21 +4,31 @@
     import {onMount} from "svelte";
     import {
         ConditionalLoadFiles,
-        FileLoadingState,
-        GetCurrentFileIndex,
-        InitialiseFileLoadingState
+        FileLoadingState, GetCarouselFileLeftIdx, GetCarouselFileRightIdx,
+        GetCurrentFileIndex, GetFileClass, GetFilePath,
+        InitialiseFileLoadingState, ScrollToIndex
     } from "./Internal.js";
 
     const allProps: CarouselProps<DerivedFileDetails> = $props();
 
-    const { files }: CarouselProps<DerivedFileDetails> = allProps;
+    const { files, autoChangeMs, chevronUrl, filePath, overrideLeftChevronClass, overrideRightChevronClass } = allProps;
 
     let carousel:HTMLDivElement|null=null;
 
     let fileLoadingState=$state<FileLoadingState[]>(InitialiseFileLoadingState(files));
 
+    const ScrollLeft = () =>
+        ScrollToIndex(carousel, curIdx => GetCarouselFileLeftIdx(curIdx, files), "smooth", allProps, fileLoadingState);
+
+    const ScrollRight = () =>
+        ScrollToIndex(carousel, curIdx => GetCarouselFileRightIdx(curIdx, files), "smooth", allProps, fileLoadingState);
+
     onMount(() => {
         ConditionalLoadFiles(0, allProps, fileLoadingState);
+        if(autoChangeMs) {
+            const interval = setInterval(ScrollRight, autoChangeMs);
+            return () => clearInterval(interval);
+        }
     });
 
     let currentIndex=$state<number>(0);
@@ -28,7 +38,7 @@
             return;
 
         const previousIndex=currentIndex;
-        const newIndex=GetCurrentFileIndex(carousel.scrollLeft, carousel.offsetWidth);
+        const newIndex=GetCurrentFileIndex(carousel);
         if(previousIndex === newIndex)
             return;
 
@@ -36,6 +46,13 @@
 
         ConditionalLoadFiles(currentIndex, allProps, fileLoadingState);
     }
+
+    const showChevrons = !!chevronUrl && files.length > 1;
+
+    const getChevronClass = overrideLeftChevronClass
+        ? (isLeft: boolean)=>
+            (isLeft ? overrideLeftChevronClass : overrideRightChevronClass)
+        : (isLeft: boolean)=> isLeft ? "CarouselChevronLeft" : "CarouselChevronRight";
 </script>
 
 <style>
@@ -60,7 +77,19 @@
 <div class="carousel-wrapper">
     <div class="carousel" onscroll={onScroll} bind:this={carousel}>
         {#each files as iterFile, i}
-            <GalleryFileComponent fileSrc={iterFile.src} loaded={fileLoadingState[i] === FileLoadingState.loaded} />
+            <GalleryFileComponent
+                fileSrc={iterFile.src} loaded={fileLoadingState[i] === FileLoadingState.loaded} mainProps={allProps}
+                additionalClass={GetFileClass(allProps, iterFile, fileLoadingState[i] === FileLoadingState.loaded)}
+            />
         {/each}
     </div>
+
+    {#if showChevrons}
+        <a onclick={ScrollLeft}>
+            <img src={GetFilePath(chevronUrl, filePath)} class={getChevronClass(true)} />
+        </a>
+        <a onclick={ScrollRight}>
+            <img src={GetFilePath(chevronUrl, filePath)} class={getChevronClass(false)} />
+        </a>
+    {/if}
 </div>
