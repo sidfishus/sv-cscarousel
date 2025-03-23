@@ -3,9 +3,7 @@
     import {FileLoadingState, type GalleryFileProps} from "./Internal.js";
     import { type CarouselFileDetails } from "./index.js";
 
-    const allProps: GalleryFileProps<DerivedFileDetails> = $props();
-
-    const { mainProps, loadingState, fileSrc, additionalClass } = allProps;
+    const { mainProps, loadingState, fileSrc, additionalClass } = $props() as GalleryFileProps<CarouselFileDetails>;
 
     const fileContainerClass = $derived(mainProps.additionalFileContainerClass
         ? "file-container " + mainProps.additionalFileContainerClass
@@ -51,20 +49,3 @@
 <div class={fileContainerClass}>
     <div class={fileClass} style={fileStyle}></div>
 </div>
-
-{#if baseFileClass === "file"}
-<div style="position: fixed; top: 400px; left: 200px;">
-
-    loading state? {loadingState}
-
-    {fileContainerClass}
-
-    <div>
-        fileClass class= {fileClass}
-    </div>
-
-    <div>
-        style={fileStyle}
-    </div>
-</div>
-{/if}
