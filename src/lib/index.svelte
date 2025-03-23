@@ -1,13 +1,18 @@
 <script lang="ts" generics="DerivedFileDetails extends CarouselFileDetails">
-    import type {CarouselFileDetails, CarouselProps} from "./index.js";
+    import type {CarouselProps,CarouselFileDetails} from "./index.ts";
     import GalleryFileComponent from "./GalleryFileComponent.svelte";
     import {onMount} from "svelte";
     import {
         ConditionalLoadFiles,
-        FileLoadingState, GetCarouselFileLeftIdx, GetCarouselFileRightIdx,
-        GetCurrentFileIndex, GetFileClass, GetFilePath,
-        InitialiseFileLoadingState, ScrollToIndex
-    } from "./Internal.js";
+        FileLoadingState,
+        GetCarouselFileLeftIdx,
+        GetCarouselFileRightIdx,
+        GetCurrentFileIndex,
+        GetFileClass,
+        GetFilePath,
+        InitialiseFileLoadingState,
+        ScrollToIndex
+    } from "./Internal.ts";
 
     const allProps: CarouselProps<DerivedFileDetails> = $props();
 
@@ -78,8 +83,8 @@
     <div class="carousel" onscroll={onScroll} bind:this={carousel}>
         {#each files as iterFile, i}
             <GalleryFileComponent
-                fileSrc={iterFile.src} loaded={fileLoadingState[i] === FileLoadingState.loaded} mainProps={allProps}
-                additionalClass={GetFileClass(allProps, iterFile, fileLoadingState[i] === FileLoadingState.loaded)}
+                fileSrc={iterFile.src} loadingState={fileLoadingState[i]} mainProps={allProps}
+                additionalClass={GetFileClass<DerivedFileDetails>(allProps, iterFile, fileLoadingState[i])}
             />
         {/each}
     </div>
@@ -92,4 +97,8 @@
             <img src={GetFilePath(chevronUrl, filePath)} class={getChevronClass(false)} />
         </a>
     {/if}
+</div>
+
+<div>
+    Loading state: {fileLoadingState[0]}
 </div>

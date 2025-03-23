@@ -8,7 +8,7 @@ export enum FileLoadingState {
 
 export type GalleryFileProps<FILE_T extends CarouselFileDetails> = {
     mainProps: CarouselProps<FILE_T>;
-    loaded: boolean;
+    loadingState: FileLoadingState;
     fileSrc: string;
     additionalClass?: string;
 }
@@ -108,13 +108,13 @@ const GetClientXInRelationToFileIndex = (x: number, fileIndex: number, carousel:
 }
 
 export const GetFileClass = <DerivedFileDetails extends CarouselFileDetails>(
-    mainProps: CarouselProps<DerivedFileDetails>, file: DerivedFileDetails, loaded: boolean) => {
+    mainProps: CarouselProps<DerivedFileDetails>, file: DerivedFileDetails, loadingState: FileLoadingState) => {
 
     const { additionalFileClass } = mainProps;
 
     let classWip="";
     if(additionalFileClass)
-        classWip=additionalFileClass(!loaded);
+        classWip=additionalFileClass(loadingState === FileLoadingState.loaded);
 
     if(file.additionalClass) {
         if(classWip.length>0)

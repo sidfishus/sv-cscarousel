@@ -1,23 +1,23 @@
 
 <script lang="ts" generics="DerivedFileDetails extends CarouselFileDetails">
-    import type {CarouselFileDetails} from "./index.js";
-    import type { GalleryFileProps } from "./Internal.js";
+    import {FileLoadingState, type GalleryFileProps} from "./Internal.js";
+    import { type CarouselFileDetails } from "./index.js";
 
     const allProps: GalleryFileProps<DerivedFileDetails> = $props();
 
-    const { mainProps, loaded, fileSrc, additionalClass } = allProps;
+    const { mainProps, loadingState, fileSrc, additionalClass } = allProps;
 
-    const fileContainerClass = mainProps.additionalFileContainerClass
+    const fileContainerClass = $derived(mainProps.additionalFileContainerClass
         ? "file-container " + mainProps.additionalFileContainerClass
-        : "file-container";
+        : "file-container");
 
-    const baseFileClass = loaded
+    const baseFileClass = $derived(loadingState === FileLoadingState.loaded
         ? "file"
-        : "file loading";
+        : "file loading");
 
-    const fileClass = additionalClass ? baseFileClass + " " + additionalClass : baseFileClass;
+    const fileClass = $derived(additionalClass ? baseFileClass + " " + additionalClass : baseFileClass);
 
-    const fileStyle=$derived(loaded ? 'background-image: url(' + fileSrc +');' : '');
+    const fileStyle=$derived(loadingState === FileLoadingState.loaded ? 'background-image: url(' + fileSrc +');' : '');
 </script>
 
 <style>
@@ -51,3 +51,20 @@
 <div class={fileContainerClass}>
     <div class={fileClass} style={fileStyle}></div>
 </div>
+
+{#if baseFileClass === "file"}
+<div style="position: fixed; top: 400px; left: 200px;">
+
+    loading state? {loadingState}
+
+    {fileContainerClass}
+
+    <div>
+        fileClass class= {fileClass}
+    </div>
+
+    <div>
+        style={fileStyle}
+    </div>
+</div>
+{/if}
