@@ -1,5 +1,5 @@
 <script lang="ts" generics="DerivedFileDetails extends CarouselFileDetails">
-    import type {CarouselProps,CarouselFileDetails} from "./index.ts";
+    import type {CarouselFileDetails} from "./index.ts";
     import GalleryFileComponent from "./GalleryFileComponent.svelte";
     import {onMount} from "svelte";
     import {
@@ -14,22 +14,32 @@
         ScrollToIndex
     } from "./Internal.ts";
 
-    const allProps: CarouselProps<DerivedFileDetails> = $props();
-
-    const { files, autoChangeMs, chevronUrl, filePath, overrideLeftChevronClass, overrideRightChevronClass } = allProps;
+    const { files, autoChangeMs, chevronUrl, filePath, overrideLeftChevronClass, overrideRightChevronClass,
+        autoLoadLeftAndRightFiles, additionalFileClass, additionalFileContainerClass } : {
+        files: DerivedFileDetails[],
+        autoLoadLeftAndRightFiles?: boolean,
+        filePath?: string,
+        shouldLoad: boolean,
+        autoChangeMs?: number,
+        chevronUrl?: string,
+        overrideLeftChevronClass?: string,
+        overrideRightChevronClass?: string,
+        additionalFileClass?: (isLoading: boolean)=>string,
+        additionalFileContainerClass?: string,
+    } = $props();
 
     let carousel:HTMLDivElement|null=null;
 
     let fileLoadingState=$state<FileLoadingState[]>(InitialiseFileLoadingState(files));
 
-    const ScrollLeft = () =>
-        ScrollToIndex(carousel, curIdx => GetCarouselFileLeftIdx(curIdx, files), "smooth", allProps, fileLoadingState);
+    const ScrollLeft = () => ScrollToIndex(carousel, curIdx => GetCarouselFileLeftIdx(curIdx, files), "smooth",
+        fileLoadingState, files, !!autoLoadLeftAndRightFiles);
 
-    const ScrollRight = () =>
-        ScrollToIndex(carousel, curIdx => GetCarouselFileRightIdx(curIdx, files), "smooth", allProps, fileLoadingState);
+    const ScrollRight = () => ScrollToIndex(carousel, curIdx => GetCarouselFileRightIdx(curIdx, files), "smooth",
+        fileLoadingState, files, !!autoLoadLeftAndRightFiles);
 
     onMount(() => {
-        ConditionalLoadFiles(0, allProps, fileLoadingState);
+        ConditionalLoadFiles(0, fileLoadingState, files, autoLoadLeftAndRightFiles===true, filePath);
         if(autoChangeMs) {
             const interval = setInterval(ScrollRight, autoChangeMs);
             return () => clearInterval(interval);
@@ -49,7 +59,7 @@
 
         currentIndex=newIndex;
 
-        ConditionalLoadFiles(currentIndex, allProps, fileLoadingState);
+        ConditionalLoadFiles(currentIndex, fileLoadingState, files, autoLoadLeftAndRightFiles===true, filePath);
     }
 
     const showChevrons = !!chevronUrl && files.length > 1;
@@ -83,22 +93,15 @@
     <div class="carousel" onscroll={onScroll} bind:this={carousel}>
         {#each files as iterFile, i}
             <GalleryFileComponent
-                fileSrc={iterFile.src} loadingState={fileLoadingState[i]} mainProps={allProps}
-                additionalClass={GetFileClass<DerivedFileDetails>(allProps, iterFile, fileLoadingState[i])}
+                fileSrc={iterFile.src} loadingState={fileLoadingState[i]}
+                additionalClass={GetFileClass<DerivedFileDetails>(iterFile, fileLoadingState[i], additionalFileClass)}
+                additionalContainerClass={additionalFileContainerClass}
             />
         {/each}
     </div>
 
     {#if showChevrons}
-        <a onclick={ScrollLeft}>
-            <img src={GetFilePath(chevronUrl, filePath)} class={getChevronClass(true)} />
-        </a>
-        <a onclick={ScrollRight}>
-            <img src={GetFilePath(chevronUrl, filePath)} class={getChevronClass(false)} />
-        </a>
+        <input type="image" src={GetFilePath(chevronUrl, filePath)} class={getChevronClass(true)} onclick={ScrollLeft} alt="scroll left" />
+        <input type="image" src={GetFilePath(chevronUrl, filePath)} class={getChevronClass(false)} onclick={ScrollRight} alt="scroll right" />
     {/if}
-</div>
-
-<div>
-    Loading state: {fileLoadingState[0]}
 </div>

@@ -1,16 +1,8 @@
-import type {CarouselFileDetails, CarouselProps} from "./index.js";
+import type {CarouselFileDetails} from "./index.ts";
 
 export enum FileLoadingState {
-    initial,
     loading,
     loaded
-}
-
-export type GalleryFileProps<FILE_T extends CarouselFileDetails> = {
-    mainProps: CarouselProps<FILE_T>;
-    loadingState: FileLoadingState;
-    fileSrc: string;
-    additionalClass?: string;
 }
 
 export const GetCarouselFileLeftIdx = (idx: number, files: CarouselFileDetails[]): number => {
@@ -41,14 +33,10 @@ export const GetFilePath = (fileSrc: string, filePath?: string) => {
 }
 
 const ConditionalLoadFile = <DerivedFileDetails extends CarouselFileDetails>(
-    idx: number, props: CarouselProps<DerivedFileDetails>, fileLoadingState: FileLoadingState[]) => {
+    idx: number, fileLoadingState: FileLoadingState[], files: DerivedFileDetails[], filePath?: string) => {
 
-    if(fileLoadingState[idx] !== FileLoadingState.initial)
+    if(fileLoadingState[idx] === FileLoadingState.loaded)
         return;
-
-    fileLoadingState[idx]=FileLoadingState.loading;
-
-    const { files, filePath } = props;
 
     const domFile = new Image();
     domFile.src = GetFilePath(files[idx].src, filePath);
@@ -62,14 +50,13 @@ const ConditionalLoadFile = <DerivedFileDetails extends CarouselFileDetails>(
 }
 
 export const ConditionalLoadFiles = <DerivedFileDetails extends CarouselFileDetails>(
-    idx: number, props: CarouselProps<DerivedFileDetails>, fileLoadingState: FileLoadingState[]) => {
+    idx: number, fileLoadingState: FileLoadingState[], files: DerivedFileDetails[],
+    autoLoadLeftAndRightFiles: boolean, filePath?: string) => {
 
-    const { files, autoLoadLeftAndRightFiles } = props;
-
-    ConditionalLoadFile(idx, props, fileLoadingState);
+    ConditionalLoadFile(idx, fileLoadingState, files, filePath);
     if(autoLoadLeftAndRightFiles) {
-        ConditionalLoadFile(GetCarouselFileLeftIdx(idx,files), props, fileLoadingState);
-        ConditionalLoadFile(GetCarouselFileRightIdx(idx,files), props, fileLoadingState);
+        ConditionalLoadFile(GetCarouselFileLeftIdx(idx,files), fileLoadingState, files, filePath);
+        ConditionalLoadFile(GetCarouselFileRightIdx(idx,files), fileLoadingState, files, filePath);
     }
 };
 
@@ -77,14 +64,15 @@ export const InitialiseFileLoadingState = (files: CarouselFileDetails[]) => {
 
     const arr=new Array<FileLoadingState>(files.length);
     for(let i=0;i<arr.length;i++)
-        arr[i]=FileLoadingState.initial;
+        arr[i]=FileLoadingState.loading;
 
     return arr;
 }
 
 export const ScrollToIndex = <DerivedFileDetails extends CarouselFileDetails>
     (carousel: HTMLDivElement|null,getIdx: (curIndex: number) => number, scrollBehaviour: ScrollBehavior,
-     mainProps: CarouselProps<DerivedFileDetails>, fileLoadingState: FileLoadingState[]) => {
+     fileLoadingState: FileLoadingState[], files: DerivedFileDetails[], autoLoadLeftAndRightFiles: boolean,
+     filePath?: string) => {
 
     if(!carousel)
         return;
@@ -100,7 +88,7 @@ export const ScrollToIndex = <DerivedFileDetails extends CarouselFileDetails>
         behavior: scrollBehaviour
     });
 
-    ConditionalLoadFiles(newIdx, mainProps, fileLoadingState);
+    ConditionalLoadFiles(newIdx, fileLoadingState, files, autoLoadLeftAndRightFiles, filePath);
 }
 
 const GetClientXInRelationToFileIndex = (x: number, fileIndex: number, carousel: HTMLDivElement) => {
@@ -109,9 +97,7 @@ const GetClientXInRelationToFileIndex = (x: number, fileIndex: number, carousel:
 }
 
 export const GetFileClass = <DerivedFileDetails extends CarouselFileDetails>(
-    mainProps: CarouselProps<DerivedFileDetails>, file: DerivedFileDetails, loadingState: FileLoadingState) => {
-
-    const { additionalFileClass } = mainProps;
+    file: DerivedFileDetails, loadingState: FileLoadingState, additionalFileClass?: (isLoading: boolean)=>string) => {
 
     let classWip="";
     if(additionalFileClass)
