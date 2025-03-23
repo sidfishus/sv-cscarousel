@@ -5,10 +5,6 @@
 
     const { mainProps, loadingState, fileSrc, additionalClass } = $props() as GalleryFileProps<CarouselFileDetails>;
 
-    const getFileContainerClass = () => mainProps.additionalFileContainerClass
-        ? "file-container " + mainProps.additionalFileContainerClass
-        : "file-container";
-
     const getBaseFileClass = () =>  loadingState === FileLoadingState.loaded ? "file" : "file loading";
 </script>
 
@@ -40,7 +36,7 @@
     }
 </style>
 
-<div class={getFileContainerClass()}>
+<div class={mainProps.additionalFileContainerClass ? "file-container " + mainProps.additionalFileContainerClass : "file-container"}>
     <div class={additionalClass ? getBaseFileClass() + " " + additionalClass : getBaseFileClass()}
          style={loadingState === FileLoadingState.loaded ? 'background-image: url(' + fileSrc +');' : ''}>
     </div>
