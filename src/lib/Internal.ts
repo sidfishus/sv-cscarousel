@@ -56,8 +56,9 @@ const ConditionalLoadFile = <DerivedFileDetails extends CarouselFileDetails>(
     domFile.onload = () => {
         fileLoadingState[idx]=FileLoadingState.loaded;
     }
-
-    //sidtodo errors.
+    domFile.onerror = () => {
+        fileLoadingState[idx]=FileLoadingState.loaded;
+    }
 }
 
 export const ConditionalLoadFiles = <DerivedFileDetails extends CarouselFileDetails>(

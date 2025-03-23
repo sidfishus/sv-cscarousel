@@ -13,5 +13,5 @@ export type CarouselProps<FILE_T extends CarouselFileDetails> = {
 
 export type CarouselFileDetails = {
     src: string;
-    additionalClass?: string //sidtodo: needed?
+    additionalClass?: string
 }
