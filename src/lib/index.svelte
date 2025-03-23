@@ -71,6 +71,19 @@
 </script>
 
 <style>
+    * {
+        all: unset;
+        box-sizing: border-box;
+    }
+    style {
+        display: none;
+    }
+    script {
+        display: none;
+    }
+    div {
+        display: inline-block;
+    }
     .carousel-wrapper {
         position: relative;
         width: 100%;
@@ -101,7 +114,9 @@
     </div>
 
     {#if showChevrons}
-        <input type="image" src={GetFilePath(chevronUrl, filePath)} class={getChevronClass(true)} onclick={ScrollLeft} alt="scroll left" />
-        <input type="image" src={GetFilePath(chevronUrl, filePath)} class={getChevronClass(false)} onclick={ScrollRight} alt="scroll right" />
+        <input type="image" src={GetFilePath(chevronUrl, filePath)} class={getChevronClass(true)} onclick={ScrollLeft}
+               alt="scroll left" />
+        <input type="image" src={GetFilePath(chevronUrl, filePath)} class={getChevronClass(false)} onclick={ScrollRight}
+               alt="scroll right" />
     {/if}
 </div>
