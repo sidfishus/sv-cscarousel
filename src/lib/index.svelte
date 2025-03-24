@@ -48,7 +48,7 @@
 
     let currentIndex=$state<number>(0);
 
-    const onScroll = () => {
+    const onScrollEnd = () => {
         if(!carousel)
             return;
 
@@ -75,12 +75,6 @@
         all: unset;
         box-sizing: border-box;
     }
-    style {
-        display: none;
-    }
-    script {
-        display: none;
-    }
     div {
         display: inline-block;
     }
@@ -103,7 +97,7 @@
 </style>
 
 <div class="carousel-wrapper">
-    <div class="carousel" onscroll={onScroll} bind:this={carousel}>
+    <div class="carousel" bind:this={carousel} onscrollend={onScrollEnd}>
         {#each files as iterFile, i}
             <GalleryFileComponent
                 fileSrc={iterFile.src} loadingState={fileLoadingState[i]}

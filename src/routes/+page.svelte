@@ -80,9 +80,9 @@
 </script>
 
 <style>
-    .carousel-container {
-        height: 300px;
-        width: 300px;
+    .BMSCarouselContainer {
+        width: 600px;
+        margin: auto;
     }
 
     :global(.BMSFileLeftChevron,.BMSFileRightChevron) {
@@ -123,8 +123,8 @@
     }
 </style>
 
-<div class="carousel-container">
-    <Carousel files={filesMultiplied} autoLoadLeftAndRightFiles={true} shouldLoad={true} autoChangeMs={3000}
+<div class="BMSCarouselContainer">
+    <Carousel files={filesMultiplied} autoLoadLeftAndRightFiles={true} shouldLoad={true} autoChangeMs={1000000}
               chevronUrl="orange-chevron-left.svg" overrideLeftChevronClass="BMSFileLeftChevron"
               overrideRightChevronClass="BMSFileRightChevron"
               additionalFileClass={()=> "BMSFile"}
