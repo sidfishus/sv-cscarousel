@@ -3,7 +3,7 @@
 	"repository": "sidfishus/sv-cscarousel",
 	"author": "sidfishus",
 	"description": "A responsive re-usable Svelte carousel component.",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run prepack",
@@ -21,8 +21,6 @@
 	"sideEffects": [
 		"**/*.css"
 	],
-	"svelte": "./dist/index.svelte",
-	"types": "./dist/index.d.ts",
 	"type": "module",
 	"exports": {
 		".": {
@@ -39,6 +37,7 @@
 		"@sveltejs/package": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"publint": "^0.3.2",
+		"sv-filegrid": "^1.0.3",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
 		"typescript": "^5.0.0",

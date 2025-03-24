@@ -1,5 +1,5 @@
 <script lang="ts" generics="DerivedFileDetails extends CarouselFileDetails">
-    import type {CarouselFileDetails} from "./index.ts";
+    import type {CarouselFileDetails} from "./index.js";
     import GalleryFileComponent from "./GalleryFileComponent.svelte";
     import {onMount} from "svelte";
     import {
@@ -12,7 +12,7 @@
         GetFilePath,
         InitialiseFileLoadingState,
         ScrollToIndex
-    } from "./Internal.ts";
+    } from "./Internal.js";
 
     const { files, autoChangeMs, chevronUrl, filePath, overrideLeftChevronClass, overrideRightChevronClass,
         autoLoadLeftAndRightFiles, additionalFileClass, additionalFileContainerClass } : {

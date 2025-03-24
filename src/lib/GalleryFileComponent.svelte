@@ -1,6 +1,6 @@
 
 <script lang="ts">
-    import {FileLoadingState} from "./Internal.ts";
+    import {FileLoadingState} from "./Internal.js";
 
     const { loadingState, fileSrc, additionalClass, additionalContainerClass }: {
         loadingState: FileLoadingState,

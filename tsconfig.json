@@ -12,7 +12,5 @@
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"declarationMap": true,
-		"allowImportingTsExtensions": true,
-		"noEmit": true
 	}
 }

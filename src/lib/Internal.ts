@@ -1,4 +1,4 @@
-import type {CarouselFileDetails} from "./index.ts";
+import type {CarouselFileDetails} from "./index.js";
 
 export enum FileLoadingState {
     loading,

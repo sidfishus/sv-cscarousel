@@ -1,6 +1,7 @@
 
 <script lang="ts">
     import Carousel from "$lib/index.svelte";
+    import { FileGrid } from "sv-filegrid";
     import type {CarouselFileDetails} from "$lib/index.js";
 
     type ExtendedCarouselFileDetails = CarouselFileDetails & {
@@ -77,6 +78,10 @@
     }
 
     let filesMultiplied=$state<ExtendedCarouselFileDetails[]>(filesMultipliedTest);
+
+    const thumbnails=filesMultiplied.map(iterFile => iterFile.src);
+
+    let selectedIndex=$state<number>(0);
 </script>
 
 <style>
@@ -121,6 +126,27 @@
         border: white solid 1.5px;
         box-shadow: 0 0 0 1px black;
     }
+
+    :global(.PortfolioFileGridFile) {
+
+        width: 100px;
+        height: 100px;
+
+        border-radius: 5px;
+
+        border: white solid 1.5px;
+        box-shadow: 0 0 0 1px red;
+        margin: 10px;
+
+        cursor: pointer;
+
+        object-fit: contain;
+    }
+
+    :global(.PortfolioFileGridFileSelected) {
+        box-shadow: 0 0 0 4px red;
+        cursor: default;
+    }
 </style>
 
 <div class="BMSCarouselContainer">
@@ -129,5 +155,15 @@
               overrideRightChevronClass="BMSFileRightChevron"
               additionalFileClass={()=> "BMSFile"}
               additionalFileContainerClass={"BMSFileContainer"}
+    />
+</div>
+
+<div>
+    <FileGrid
+            files={thumbnails}
+            selectedIndex={selectedIndex}
+            overrideFileClass={(isSelected)=>
+                (isSelected ? "PortfolioFileGridFile PortfolioFileGridFileSelected" : "PortfolioFileGridFile")}
+            onclick={newIdx => selectedIndex = newIdx}
     />
 </div>
