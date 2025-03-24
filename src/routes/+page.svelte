@@ -155,6 +155,7 @@
               overrideRightChevronClass="BMSFileRightChevron"
               additionalFileClass={()=> "BMSFile"}
               additionalFileContainerClass={"BMSFileContainer"}
+              bind:selectedIndex={selectedIndex}
     />
 </div>
 

@@ -14,8 +14,8 @@
         ScrollToIndex
     } from "./Internal.js";
 
-    const { files, autoChangeMs, chevronUrl, filePath, overrideLeftChevronClass, overrideRightChevronClass,
-        autoLoadLeftAndRightFiles, additionalFileClass, additionalFileContainerClass } : {
+    let { files, autoChangeMs, chevronUrl, filePath, overrideLeftChevronClass, overrideRightChevronClass,
+        autoLoadLeftAndRightFiles, additionalFileClass, additionalFileContainerClass, selectedIndex=$bindable() } : {
         files: DerivedFileDetails[],
         autoLoadLeftAndRightFiles?: boolean,
         filePath?: string,
@@ -26,6 +26,7 @@
         overrideRightChevronClass?: string,
         additionalFileClass?: (isLoading: boolean)=>string,
         additionalFileContainerClass?: string,
+        selectedIndex: number
     } = $props();
 
     let carousel:HTMLDivElement|null=null;
@@ -46,20 +47,18 @@
         }
     });
 
-    let currentIndex=$state<number>(0);
-
     const onScrollEnd = () => {
         if(!carousel)
             return;
 
-        const previousIndex=currentIndex;
+        const previousIndex=selectedIndex;
         const newIndex=GetCurrentFileIndex(carousel);
         if(previousIndex === newIndex)
             return;
 
-        currentIndex=newIndex;
+        selectedIndex=newIndex;
 
-        ConditionalLoadFiles(currentIndex, fileLoadingState, files, autoLoadLeftAndRightFiles===true, filePath);
+        ConditionalLoadFiles(selectedIndex, fileLoadingState, files, autoLoadLeftAndRightFiles===true, filePath);
     }
 
     const showChevrons = !!chevronUrl && files.length > 1;
