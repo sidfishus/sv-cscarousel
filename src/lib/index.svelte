@@ -15,7 +15,7 @@
     } from "./Internal.js";
 
     let { files, autoChangeMs, chevronUrl, filePath, overrideLeftChevronClass, overrideRightChevronClass,
-        autoLoadLeftAndRightFiles, additionalFileClass, additionalFileContainerClass, selectedIndex=$bindable() } : {
+        autoLoadLeftAndRightFiles, additionalFileClass, additionalFileContainerClass, onscroll: clientOnScroll } : {
         files: DerivedFileDetails[],
         autoLoadLeftAndRightFiles?: boolean,
         filePath?: string,
@@ -26,18 +26,32 @@
         overrideRightChevronClass?: string,
         additionalFileClass?: (isLoading: boolean)=>string,
         additionalFileContainerClass?: string,
-        selectedIndex: number
+        onscroll?: (idx: number) => void
     } = $props();
 
     let carousel:HTMLDivElement|null=null;
 
     let fileLoadingState=$state<FileLoadingState[]>(InitialiseFileLoadingState(files));
 
-    const ScrollLeft = () => ScrollToIndex(carousel, curIdx => GetCarouselFileLeftIdx(curIdx, files), "smooth",
-        fileLoadingState, files, !!autoLoadLeftAndRightFiles);
+    // 1. on mount of parent, set a callback on this component.
+    // 2. when index changes of file grid, call function on carousel to scroll to that index, that doesn't fire the callback.
+    // 3. when user clicks left or right chevron: call the callback, that sets reactive which updates the parent.
+    // 4. on scroll end, if the landed index !== selected index, fire the callback and conditional load the images
 
-    const ScrollRight = () => ScrollToIndex(carousel, curIdx => GetCarouselFileRightIdx(curIdx, files), "smooth",
-        fileLoadingState, files, !!autoLoadLeftAndRightFiles);
+
+    // Or: don't hold selected index as state.
+
+    let transitionToIndex=0;
+    const SetTransitionToIndex = (newIdx: number) => transitionToIndex = newIdx;
+    const GetTransitionToIndex = () => transitionToIndex;
+
+    export const Scroll = (newIdx: number) =>
+        ScrollToIndex(carousel, GetCarouselFileLeftIdx(GetTransitionToIndex(), files), "smooth",
+            fileLoadingState, files, !!autoLoadLeftAndRightFiles, SetTransitionToIndex, filePath);
+
+    const ScrollLeft = () => Scroll(GetCarouselFileLeftIdx(GetTransitionToIndex(), files));
+
+    const ScrollRight = () => Scroll(GetCarouselFileRightIdx(GetTransitionToIndex(), files));
 
     onMount(() => {
         ConditionalLoadFiles(0, fileLoadingState, files, autoLoadLeftAndRightFiles===true, filePath);
@@ -47,18 +61,17 @@
         }
     });
 
+    const onScroll = clientOnScroll ? () => clientOnScroll(GetCurrentFileIndex(carousel!)) : undefined;
+
     const onScrollEnd = () => {
         if(!carousel)
             return;
 
-        const previousIndex=selectedIndex;
         const newIndex=GetCurrentFileIndex(carousel);
-        if(previousIndex === newIndex)
-            return;
 
-        selectedIndex=newIndex;
+        SetTransitionToIndex(newIndex);
 
-        ConditionalLoadFiles(selectedIndex, fileLoadingState, files, autoLoadLeftAndRightFiles===true, filePath);
+        ConditionalLoadFiles(newIndex, fileLoadingState, files, autoLoadLeftAndRightFiles===true, filePath);
     }
 
     const showChevrons = !!chevronUrl && files.length > 1;
@@ -96,7 +109,7 @@
 </style>
 
 <div class="carousel-wrapper">
-    <div class="carousel" bind:this={carousel} onscrollend={onScrollEnd}>
+    <div class="carousel" bind:this={carousel} onscroll={onScroll} onscrollend={onScrollEnd}>
         {#each files as iterFile, i}
             <GalleryFileComponent
                 fileSrc={iterFile.src} loadingState={fileLoadingState[i]}

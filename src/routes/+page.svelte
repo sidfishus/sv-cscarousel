@@ -82,6 +82,18 @@
     const thumbnails=filesMultiplied.map(iterFile => iterFile.src);
 
     let selectedIndex=$state<number>(0);
+
+    let carousel=null;
+
+    const onScroll = (newIdx: number) => {
+        if(selectedIndex !== newIdx) {
+            selectedIndex = newIdx;
+        }
+    }
+
+    const fileGridOnClick = (newIdx: number) => {
+        carousel!.Scroll(newIdx);
+    }
 </script>
 
 <style>
@@ -155,7 +167,8 @@
               overrideRightChevronClass="BMSFileRightChevron"
               additionalFileClass={()=> "BMSFile"}
               additionalFileContainerClass={"BMSFileContainer"}
-              bind:selectedIndex={selectedIndex}
+              bind:this={carousel}
+              onscroll={onScroll}
     />
 </div>
 
@@ -165,6 +178,6 @@
             selectedIndex={selectedIndex}
             overrideFileClass={(isSelected)=>
                 (isSelected ? "PortfolioFileGridFile PortfolioFileGridFileSelected" : "PortfolioFileGridFile")}
-            onclick={newIdx => selectedIndex = newIdx}
+            onclick={fileGridOnClick}
     />
 </div>

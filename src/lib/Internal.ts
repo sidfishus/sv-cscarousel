@@ -70,25 +70,23 @@ export const InitialiseFileLoadingState = (files: CarouselFileDetails[]) => {
 }
 
 export const ScrollToIndex = <DerivedFileDetails extends CarouselFileDetails>
-    (carousel: HTMLDivElement|null,getIdx: (curIndex: number) => number, scrollBehaviour: ScrollBehavior,
+    (carousel: HTMLDivElement|null,index: number, scrollBehaviour: ScrollBehavior,
      fileLoadingState: FileLoadingState[], files: DerivedFileDetails[], autoLoadLeftAndRightFiles: boolean,
-     filePath?: string) => {
+     setScrollToIndex: (newIdx: number) => void, filePath?: string) => {
 
     if(!carousel)
         return;
 
-    const curIdx=GetCurrentFileIndex(carousel);
-    const newIdx=getIdx(curIdx);
-
-    const scrollX=GetClientXInRelationToFileIndex(0,newIdx,carousel);
+    const scrollX=GetClientXInRelationToFileIndex(0,index,carousel);
 
     carousel.scrollTo({
         left: scrollX,
         top: 0,
         behavior: scrollBehaviour
     });
+    setScrollToIndex(index);
 
-    ConditionalLoadFiles(newIdx, fileLoadingState, files, autoLoadLeftAndRightFiles, filePath);
+    ConditionalLoadFiles(index, fileLoadingState, files, autoLoadLeftAndRightFiles, filePath);
 }
 
 const GetClientXInRelationToFileIndex = (x: number, fileIndex: number, carousel: HTMLDivElement) => {
