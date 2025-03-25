@@ -15,7 +15,8 @@
     } from "./Internal.js";
 
     let { files, autoChangeMs, chevronUrl, filePath, overrideLeftChevronClass, overrideRightChevronClass,
-        autoLoadLeftAndRightFiles, additionalFileClass, additionalFileContainerClass, onscroll: clientOnScroll } : {
+        autoLoadLeftAndRightFiles, additionalFileClass, additionalFileContainerClass, onscroll: clientOnScroll,
+        onscrollend: clientOnScrollEnd} : {
         files: DerivedFileDetails[],
         autoLoadLeftAndRightFiles?: boolean,
         filePath?: string,
@@ -33,21 +34,13 @@
 
     let fileLoadingState=$state<FileLoadingState[]>(InitialiseFileLoadingState(files));
 
-    // 1. on mount of parent, set a callback on this component.
-    // 2. when index changes of file grid, call function on carousel to scroll to that index, that doesn't fire the callback.
-    // 3. when user clicks left or right chevron: call the callback, that sets reactive which updates the parent.
-    // 4. on scroll end, if the landed index !== selected index, fire the callback and conditional load the images
-
-
-    // Or: don't hold selected index as state.
-
     let transitionToIndex=0;
     const SetTransitionToIndex = (newIdx: number) => transitionToIndex = newIdx;
     const GetTransitionToIndex = () => transitionToIndex;
 
     export const Scroll = (newIdx: number) =>
-        ScrollToIndex(carousel, GetCarouselFileLeftIdx(GetTransitionToIndex(), files), "smooth",
-            fileLoadingState, files, !!autoLoadLeftAndRightFiles, SetTransitionToIndex, filePath);
+        ScrollToIndex(carousel, newIdx, "smooth", fileLoadingState, files, !!autoLoadLeftAndRightFiles,
+            SetTransitionToIndex, filePath);
 
     const ScrollLeft = () => Scroll(GetCarouselFileLeftIdx(GetTransitionToIndex(), files));
 
@@ -70,6 +63,9 @@
         const newIndex=GetCurrentFileIndex(carousel);
 
         SetTransitionToIndex(newIndex);
+
+        if(clientOnScrollEnd)
+            clientOnScrollEnd(newIndex);
 
         ConditionalLoadFiles(newIndex, fileLoadingState, files, autoLoadLeftAndRightFiles===true, filePath);
     }
