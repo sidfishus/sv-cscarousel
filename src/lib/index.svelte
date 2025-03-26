@@ -80,28 +80,54 @@
 </script>
 
 <style>
-    * {
+    .carousel-wrapper {
         all: unset;
         box-sizing: border-box;
-    }
-    div {
-        display: inline-block;
-    }
-    .carousel-wrapper {
         position: relative;
+        display: inline-block;
+
         width: 100%;
         height: 100%;
     }
     .carousel {
+        all: unset;
+        box-sizing: border-box;
+        display: inline-block;
+
         position: relative;
         overflow-x: auto;
         scrollbar-width: none;
         white-space: nowrap;
         overflow-y: hidden;
         scroll-snap-type: x mandatory;
-        box-sizing: border-box;
         width: 100%;
         height: 100%;
+    }
+    .CarouselChevronLeft,.CarouselChevronRight {
+        all: unset;
+        box-sizing: border-box;
+        display: inline-block;
+
+        width: 50px;
+        position: absolute;
+        z-index: 5;
+
+        top: calc(50% - (50px / 2));
+
+        cursor: pointer;
+    }
+
+    .CarouselChevronLeft {
+        left: 30px;
+    }
+
+    .CarouselChevronRight {
+        right: 30px;
+        transform: rotate(-180deg);
+    }
+
+    .CarouselChevronLeft:active,.CarouselChevronRight:active {
+        opacity: 25%;
     }
 </style>
 
