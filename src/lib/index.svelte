@@ -27,7 +27,8 @@
         overrideRightChevronClass?: string,
         additionalFileClass?: (isLoading: boolean)=>string,
         additionalFileContainerClass?: string,
-        onscroll?: (idx: number) => void
+        onscroll?: (idx: number) => void,
+        onscrollend?: (idx: number) => void
     } = $props();
 
     let carousel:HTMLDivElement|null=null;
@@ -108,7 +109,7 @@
     <div class="carousel" bind:this={carousel} onscroll={onScroll} onscrollend={onScrollEnd}>
         {#each files as iterFile, i}
             <GalleryFileComponent
-                fileSrc={iterFile.src} loadingState={fileLoadingState[i]}
+                fileSrc={GetFilePath(iterFile.src,filePath)} loadingState={fileLoadingState[i]}
                 additionalClass={GetFileClass<DerivedFileDetails>(iterFile, fileLoadingState[i], additionalFileClass)}
                 additionalContainerClass={additionalFileContainerClass}
             />
