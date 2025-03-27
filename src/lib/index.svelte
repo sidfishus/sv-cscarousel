@@ -29,7 +29,7 @@
         additionalFileContainerClass?: string,
         onscroll?: (idx: number) => void,
         onscrollend?: (idx: number) => void,
-        onfileclick?: (idx: number) => void
+        onfileclick?: (idx: number) => void,
     } = $props();
 
     let carousel:HTMLDivElement|null=null;
@@ -150,6 +150,7 @@
                 fileSrc={GetFilePath(iterFile.src,filePath)} loadingState={fileLoadingState[i]}
                 additionalClass={GetFileClass<DerivedFileDetails>(iterFile, fileLoadingState[i], additionalFileClass)}
                 additionalContainerClass={additionalFileContainerClass} onFileClick={onFileClick(i)}
+                url={iterFile.url} ariaLabel={iterFile.ariaLabel}
             />
         {/each}
     </div>

@@ -12,10 +12,12 @@
         {
             src: "IMG_1397.jpg",
             id: 1n,
+            url: "https://google.com"
         },
         {
             src: "IMG_002.jpg",
             id: 2n,
+            url: "https://bing.com"
         },
         {
             src: "IMG_0024.jpg",

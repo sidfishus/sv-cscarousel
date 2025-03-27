@@ -4,6 +4,8 @@ export { Carousel };
 
 export type CarouselFileDetails = {
     src: string;
-    additionalClass?: string
+    additionalClass?: string;
+    url?: string;
+    ariaLabel?: string;
 }
 
