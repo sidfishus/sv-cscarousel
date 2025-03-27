@@ -19,7 +19,6 @@
         width: 100%;
         height: 100%;
         box-sizing: border-box;
-        margin-bottom: -4px;
     }
     .file {
         box-sizing: border-box;

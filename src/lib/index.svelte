@@ -84,7 +84,7 @@
         all: unset;
         box-sizing: border-box;
         position: relative;
-        display: inline-block;
+        display: block;
 
         width: 100%;
         height: 100%;
@@ -92,7 +92,7 @@
     .carousel {
         all: unset;
         box-sizing: border-box;
-        display: inline-block;
+        display: block;
 
         position: relative;
         overflow-x: auto;
@@ -102,11 +102,15 @@
         scroll-snap-type: x mandatory;
         width: 100%;
         height: 100%;
+
+        /* Very important otherwise 4px are added to the bottom:
+        https://stackoverflow.com/questions/3197601/white-space-at-bottom-of-anchor-tag */
+        font-size: 0;
     }
     .CarouselChevronLeft,.CarouselChevronRight {
         all: unset;
         box-sizing: border-box;
-        display: inline-block;
+        display: block;
 
         width: 50px;
         position: absolute;

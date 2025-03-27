@@ -98,7 +98,7 @@
 
 <style>
     .BMSCarouselContainer {
-        width: 600px;
+        max-width: 600px;
         margin: auto;
     }
 
@@ -163,8 +163,7 @@
 
 <div class="BMSCarouselContainer">
     <Carousel files={filesMultiplied} autoLoadLeftAndRightFiles={true} shouldLoad={true} autoChangeMs={1000000}
-              chevronUrl="orange-chevron-left.svg" overrideLeftChevronClass="BMSFileLeftChevron"
-              overrideRightChevronClass="BMSFileRightChevron"
+              chevronUrl="orange-chevron-left.svg"
               additionalFileClass={()=> "BMSFile"}
               additionalFileContainerClass={"BMSFileContainer"}
               bind:this={carousel}
