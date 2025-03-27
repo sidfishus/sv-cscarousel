@@ -16,7 +16,7 @@
 
     let { files, autoChangeMs, chevronUrl, filePath, overrideLeftChevronClass, overrideRightChevronClass,
         autoLoadLeftAndRightFiles, additionalFileClass, additionalFileContainerClass, onscroll: clientOnScroll,
-        onscrollend: clientOnScrollEnd} : {
+        onscrollend: clientOnScrollEnd, onfileclick: clientOnFileClick} : {
         files: DerivedFileDetails[],
         autoLoadLeftAndRightFiles?: boolean,
         filePath?: string,
@@ -28,7 +28,8 @@
         additionalFileClass?: (isLoading: boolean)=>string,
         additionalFileContainerClass?: string,
         onscroll?: (idx: number) => void,
-        onscrollend?: (idx: number) => void
+        onscrollend?: (idx: number) => void,
+        onfileclick?: (idx: number) => void
     } = $props();
 
     let carousel:HTMLDivElement|null=null;
@@ -77,6 +78,13 @@
         ? (isLeft: boolean)=>
             (isLeft ? overrideLeftChevronClass : overrideRightChevronClass)
         : (isLeft: boolean)=> isLeft ? "CarouselChevronLeft" : "CarouselChevronRight";
+
+    const onFileClick = (idx: number) => {
+        if(clientOnFileClick)
+            return () => clientOnFileClick(idx);
+
+        return undefined;
+    }
 </script>
 
 <style>
@@ -141,7 +149,7 @@
             <GalleryFileComponent
                 fileSrc={GetFilePath(iterFile.src,filePath)} loadingState={fileLoadingState[i]}
                 additionalClass={GetFileClass<DerivedFileDetails>(iterFile, fileLoadingState[i], additionalFileClass)}
-                additionalContainerClass={additionalFileContainerClass}
+                additionalContainerClass={additionalFileContainerClass} onFileClick={onFileClick(i)}
             />
         {/each}
     </div>

@@ -2,11 +2,12 @@
 <script lang="ts">
     import {FileLoadingState} from "./Internal.js";
 
-    const { loadingState, fileSrc, additionalClass, additionalContainerClass }: {
+    const { loadingState, fileSrc, additionalClass, additionalContainerClass, onFileClick }: {
         loadingState: FileLoadingState,
         fileSrc: string,
         additionalClass?: string,
         additionalContainerClass?: string
+        onFileClick?: ()=>void;
     } = $props();
 
     const getBaseFileClass = () => loadingState === FileLoadingState.loaded ? "file" : "file loading";
@@ -42,6 +43,7 @@
 
 <div class={additionalContainerClass ? "file-container " + additionalContainerClass : "file-container"}>
     <div class={additionalClass ? getBaseFileClass() + " " + additionalClass : getBaseFileClass()}
-         style={loadingState === FileLoadingState.loaded ? 'background-image: url(' + fileSrc +');' : ''}>
+         style={loadingState === FileLoadingState.loaded ? 'background-image: url(' + fileSrc +');' : ''}
+            onclick={onFileClick} role="button">
     </div>
 </div>

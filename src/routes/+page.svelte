@@ -168,6 +168,7 @@
               additionalFileContainerClass={"BMSFileContainer"}
               bind:this={carousel}
               onscroll={onScroll}
+              onfileclick={(i)=>alert("hi " + i)}
     />
 </div>
 
